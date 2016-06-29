@@ -773,7 +773,7 @@ define(["angular"], function(angular) {
 
 
             +'<!-- model02 -->'
-            +'<table class="ciscosb-table ciscosb-table-dom" ng-if="complexTableDm.childNodeType ==='+'mode02'+' ">'
+            +'<table class="ciscosb-table ciscosb-table-dom" ng-if="complexTableDm.childNodeType ==='+'"mode02"'+' ">'
               +'<thead>'
                 +'<tr>'
                   +'<th ng-repeat="tbTitle in tableTitleDM track by $index" ng-click="sortData(tbTitle)" ng-class="setComplexTdStyle(tbTitle)" ng-if="tbTitle.isVisible">'
