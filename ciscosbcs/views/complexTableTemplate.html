@@ -1,0 +1,140 @@
+<div class="ciscosb-complex-table-cntr">
+  <div class="ciscosb-cx-tb-tool-cntr">
+    <div class="ciscosb-table-toolbar">
+      <i class="fa fa-filter ciscosb-table-action-icon" aria-hidden="true" ng-show="showFilterBtn"></i>
+      <i class="fa fa-plus ciscosb-table-action-icon" ng-click="showAddNewItemPanel()" ng-show="showAddBtn"></i>
+      <i class="fa fa-save ciscosb-table-action-icon" ng-click = "saveData()" ng-show="showSaveBtn"></i>
+      <i class="fa fa-history ciscosb-table-action-icon" ng-click = "cancelAddNewItem()" ng-show="showSaveBtn"></i>
+      <i class="fa fa-trash-o ciscosb-table-action-icon" ng-click = "deleteRow()" ng-show="showDeleteBtn"></i>
+      <i class="fa fa-pencil-square-o ciscosb-table-action-icon" ng-show="showEditBtn" ng-click="editRow()"></i>
+      <i class="fa fa-th ciscosb-table-action-icon" ng-click="toggleColSelector()" style="position: relative;z-index: 10;" ng-show="showColSelectorCntr">
+        <choose-table-col check-box-items="newswitchData" table-title = "tableTitleDM" ng-show="showTableColSelector"></choose-table-col>
+      </i>
+    </div>
+    <!-- <div class="search-box-cntr">
+      <search-box></search-box>
+    </div> -->
+  </div>
+
+  <div style="position: relative;">
+    <!-- model01 -->
+    <table class="ciscosb-table ciscosb-table-dom" ng-if="complexTableDm.childNodeType === 'mode01'">
+      <thead>
+        <tr>
+          <th ng-repeat="tbTitle in tableTitleDM track by $index" ng-click="sortData(tbTitle)" ng-class="setComplexTdStyle(tbTitle)">{{tbTitle.value}}
+            <i class="fa" ng-class="setOrderIconStyle(tbTitle)"></i>
+            <smb-checkbox ng-if="tbTitle.tdType === 'checkBox'" ng-model="testmoel" ng-click="selectAllRows()"></smb-checkbox>
+          </th>
+        </tr>
+        <tr ng-show="showAddNewRowPanel">
+          <td ng-transclude colspan="{{newswitchData[0].trunk.length}}"></td>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat-start="rowItem in newswitchData" finished ng-mousedown="trMouseDown($event, $index,rowItem)" ng-mousemove="trMouseMove($event,$index,rowItem)" ng-mouseup="trMouseUp($event,$index)" groupId = "{{rowItem.trunk[0].trunkId}}" nodeType="{{rowItem.trunk[0].nodeType}}" ng-click="selectTrunk(rowItem)">
+          <td ng-repeat="dataItem in rowItem.trunk" ng-class="setComplexTdStyle(dataItem)">
+            <span ng-if="dataItem.tdType === 'normal' && !dataItem.isCtrlVisible">{{dataItem.text}}</span>
+            <smb-radio ng-if="dataItem.tdType === 'radioBtn'" name="complexTableRb"  ng-click="selectRow1(dataItem)" ng-checked="dataItem.checked"></smb-radio>
+            <smb-checkbox ng-if="dataItem.tdType === 'checkBox'" ng-model="dataItem.checked" ng-click="selectRow2(dataItem)"></smb-checkbox>
+
+            <i class="{{complexTableDm.trunkIcon}}" ng-class="setExpandMark(dataItem)" ng-if="showTrunkIcon(dataItem,$index)" ng-click="clickTrunkIcon($event,dataItem)"></i>
+
+            <select ng-if="dataItem.contentCntr === 'select' && dataItem.isCtrlVisible" ng-model="selectCtrlVal" ng-change="dataItem.text = selectCtrlVal.name; selectChange(dataItem,selectCtrlVal)" ng-options='item.name for item in dataItem.selectDm'>
+                <option value = "">-Select a Option-</option>
+            </select>
+            <input type="text" class="form-control" ng-model="dataItem.text" ng-change="textChange(dataItem)" ng-if="dataItem.contentCntr === 'text' && dataItem.isCtrlVisible"/>
+          </td>
+        </tr>
+
+        <tr ng-repeat="rowChildItem in rowItem.child"  finished groupId = "{{rowItem.trunk[0].trunkId}}" nodeType="{{rowChildItem[0].nodeType}}" ng-click="selectChild(rowChildItem)" style="display: none;">
+          <td ng-repeat="rowChildItem in rowChildItem" ng-class="setComplexTdStyle(rowChildItem)">
+
+            <span ng-if="rowChildItem.tdType === 'normal' && !rowChildItem.isCtrlVisible">{{rowChildItem.text}}</span>
+            <smb-radio ng-if="rowChildItem.tdType === 'radioBtn'" name="complexTableRb" ng-click="selectRow1(rowChildItem)" ng-checked="rowChildItem.checked"></smb-radio>
+            <smb-checkbox ng-if="rowChildItem.tdType === 'checkBox'" ng-model="rowChildItem.checked" ng-click="selectRow2(rowChildItem)"></smb-checkbox>
+
+            <select ng-if="rowChildItem.contentCntr === 'select' && rowChildItem.isCtrlVisible" ng-model="selectCtrlVal" ng-change="rowChildItem.text = selectCtrlVal.name; selectChange(rowChildItem,selectCtrlVal)" ng-options='item.name for item in rowChildItem.selectDm'>
+                <option value = "">-Select a Option-</option>
+            </select>
+            <input type="text" class="form-control" ng-model="rowChildItem.text" ng-change="textChange(rowChildItem)" ng-if="rowChildItem.contentCntr === 'text' && rowChildItem.isCtrlVisible"/>
+          </td>
+        </tr>
+        <tr ng-repeat-end></tr>
+      </tbody>
+    </table>
+
+
+    <!-- model02 -->
+    <table class="ciscosb-table ciscosb-table-dom" ng-if="complexTableDm.childNodeType ==='mode02' ">
+      <thead>
+        <tr>
+          <th ng-repeat="tbTitle in tableTitleDM track by $index" ng-click="sortData(tbTitle)" ng-class="setComplexTdStyle(tbTitle)" ng-if="tbTitle.isVisible">
+            <span ng-if="tbTitle.tdType === 'normal'">{{tbTitle.value}}</span>
+            <i class="fa" ng-class="setOrderIconStyle(tbTitle)" ng-if="tbTitle.tdType === 'normal'" style="display: inline;"></i>
+            <smb-checkbox ng-if="tbTitle.tdType === 'checkBox'" ng-model="tbTitle.checked" ng-click="selectRow2(tbTitle,$event)"></smb-checkbox>
+          </th>
+        </tr>
+        <tr ng-show="showAddNewRowPanel">
+          <td ng-transclude colspan="{{columnLen}}"></td>
+        </tr>
+      </thead>
+      <tbody>
+
+        <tr ng-repeat-start="rowItem in newswitchData" finished ng-mousedown="trMouseDown($event, $index, rowItem)" ng-mousemove="trMouseMove($event,$index,rowItem)" ng-mouseup="trMouseUp($event,$index)" groupId = "{{rowItem.trunk[0].trunkId}}" uniqueId = "{{rowItem.trunk[0].uniqueId}}"  nodeType="{{rowItem.trunk[0].nodeType}}" ng-click="selectTrunk(rowItem)">
+          <td ng-repeat="dataItem in rowItem.trunk" ng-class="setComplexTdStyle(dataItem)" ng-if="dataItem.isVisible">
+            <smb-radio ng-if="dataItem.tdType === 'radioBtn'" name="complexTableRb"  ng-click="selectRow1(dataItem)" class="ciscosb-table-radio" ng-checked="dataItem.checked"></smb-radio>
+            
+            <smb-checkbox ng-if="dataItem.tdType === 'checkBox'" ng-model="dataItem.checked" ng-click="selectRow2(dataItem,$event)"></smb-checkbox>
+
+            <i class="ciscosb-table-expand-icon" ng-class="setExpandMark(dataItem)" ng-if="showTrunkIcon(dataItem,$index)" ng-click="clickTrunkIcon($event,dataItem)"></i>
+            <span ng-if="dataItem.tdType === 'normal' && !dataItem.isCtrlVisible">{{dataItem.text}}</span>
+            <select ng-if="dataItem.contentCntr === 'select' && dataItem.isCtrlVisible" ng-init="currentSelectItem = setCurrentSelectItemVal(dataItem.selectDm,dataItem.text);" ng-model="currentSelectItem" ng-change="selectCtrlChange(dataItem,currentSelectItem,rowItem)" ng-options='item.name for item in dataItem.selectDm'>
+                <option value = "">-Select a Option-</option>
+            </select>
+            <input type="text" class="form-control" ng-model="dataItem.text" ng-change="textChange(dataItem)" ng-if="dataItem.contentCntr === 'text' && dataItem.isCtrlVisible"/>
+
+            <switch-button ng-model='dataItem.text' ng-if="dataItem.contentCntr === 'toggleBtn' && dataItem.isCtrlVisible"></switch-button>
+          </td>
+        </tr>
+        <tr ng-repeat-end groupId = "{{rowItem.trunk[0].trunkId}}" nodeType="{{rowItem.child[0][0].nodeType}}" style="display: none;">
+          <td colspan="{{rouItem.trunk.length}}">
+            <table class="ciscosb-table-child" style="margin-left: 20px;">
+              <thead>
+                <tr>
+                  <th ng-repeat="childTitle in tableTitleDM1" ng-class="setComplexTdStyle(childTitle)" ng-if="childTitle.isVisible">
+                    <span ng-if="childTitle.tdType === 'normal'">{{childTitle.value}}</span>
+                  </th>
+                </tr>
+              </thead>
+              <tr ng-repeat = "childDataItem in rowItem.child" ng-click="selectChild(childDataItem)">
+                <td ng-repeat="childDataTd in childDataItem" ng-class="setComplexTdStyle(childDataTd)" ng-if="childDataTd.isVisible">
+                  <span ng-if="childDataTd.tdType === 'normal' && !childDataTd.isCtrlVisible">{{childDataTd.text}}</span>
+
+                  <smb-radio ng-if="childDataTd.tdType === 'radioBtn'" name="complexTableRb" ng-click="selectRow1(childDataTd)" class="ciscosb-table-radio" ng-checked="childDataTd.checked"></smb-radio>
+                  <smb-checkbox ng-if="childDataTd.tdType === 'checkBox'" ng-model="childDataTd.checked" ng-click="selectRow2(childDataTd,$event)"></smb-checkbox>
+
+                  <select ng-if="childDataTd.contentCntr === 'select' && childDataTd.isCtrlVisible" ng-options='item.name for item in childDataTd.selectDm'>
+                      <option value = "">-Select a Option-</option>
+                  </select>
+                  <input type="text" class="form-control" ng-model="childDataTd.text" ng-if="childDataTd.contentCntr === 'text' && childDataTd.isCtrlVisible"/>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div id="rowMovePosition" ng-mouseup = "trMouseUp($event)" class="ciscosb-drag-drop-mark"></div>
+  </div>
+  <div class="ciscosb-table-pagination-cntr" ng-show="isPaginationDis">
+    <tm-pagination conf="conf" data="tableDM" tm-data="tmData" ng-model="newswitchData" ng-click="paginationClick($event)" ng-mouseup="paginationMouseup($event)"></tm-pagination>
+  </div>
+  
+  
+
+  <model-dialog  dialog-title="Reminder" ng-show="showModelDlg"  config="showModelDialogCF">
+      <alert-dialog alert-type="warn"  > 
+         <span ng-bind="alertBoxTxt"></span>
+      </alert-dialog>
+  </model-dialog>
+</div>

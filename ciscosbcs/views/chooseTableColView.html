@@ -1,0 +1,12 @@
+<div class ="ciscosb-col-selector" ng-click="clickCntr($event)">
+  <div class ="ciscosb-col-selector-arrow"></div>
+  <div class="ciscosb-col-selector-content-cntr">
+    <table class="ciscosb-col-table">
+      <tr ng-repeat="itemObj in dm">
+        <td ng-repeat = "item in itemObj" class="ciscosb-col-table-td">
+          <smb-checkbox ng-model="item.checked" ng-click="chooseCol(item)">{{item.name}}</smb-checkbox>
+        </td>
+      </tr>
+    </table>
+  </div>
+</div>

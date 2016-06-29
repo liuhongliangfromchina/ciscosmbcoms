@@ -1,0 +1,25 @@
+<div class="ciscosb-complex-table-cntr">
+  <table class="ciscosb-table">
+    <thead>
+      <tr>
+        <th ng-repeat="tbTitle in tableTitleDM track by $index" ng-click="sortData(tbTitle)" ng-class="setRegularTdStyle(tbTitle)">{{tbTitle.value}}
+          <i class="fa" ng-class="setOrderIconStyle(tbTitle)"></i>
+          <!-- <smb-radio ng-if="tbTitle.tdType === 'radioBtn' && tbTitle.value"></smb-radio> -->
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="rowItem in newswitchData" finished ng-mousedown="trMouseDown($event, $index)" ng-mousemove="trMouseMove($event,$index)" ng-mouseup="trMouseUp($event,$index)">
+        <td ng-repeat="dataItem in rowItem" ng-class="setRegularTdStyle(dataItem)">
+        {{dataItem.text}}
+          <smb-radio ng-if="dataItem.tdType === 'radioBtn'" name="rb"  ng-click="selectOneRow(rowItem,selectRowStatus)"></smb-radio>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <div ng-show="isPaginationDis">
+    <tm-pagination conf="conf" data="tableDM" tm-data="tmData" ng-model="newswitchData" ng-click="paginationClick($event)" ng-mouseup="paginationMouseup($event)"></tm-pagination>
+  </div>
+  
+  <div id="rowMovePosition" ng-mouseup = "trMouseUp($event)" style="height:6px; border-top:1px solid black; border-bottom: 1px solid black; position: absolute; width: 100%;top:0; display: none;"></div>
+</div>
