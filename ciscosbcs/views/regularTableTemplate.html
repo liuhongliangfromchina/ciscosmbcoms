@@ -4,7 +4,6 @@
       <tr>
         <th ng-repeat="tbTitle in tableTitleDM track by $index" ng-click="sortData(tbTitle)" ng-class="setRegularTdStyle(tbTitle)">{{tbTitle.value}}
           <i class="fa" ng-class="setOrderIconStyle(tbTitle)"></i>
-          <!-- <smb-radio ng-if="tbTitle.tdType === 'radioBtn' && tbTitle.value"></smb-radio> -->
         </th>
       </tr>
     </thead>
