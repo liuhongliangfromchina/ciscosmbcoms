@@ -719,11 +719,13 @@ define(["angular"], function(angular) {
                 +'<choose-table-col check-box-items="newswitchData" table-title = "tableTitleDM" ng-show="showTableColSelector"></choose-table-col>'
               +'</i>'
             +'</div>'
-            
+            +'<!-- <div class="search-box-cntr">'
+              +'<search-box></search-box>'
+            +'</div> -->'
           +'</div>'
 
           +'<div style="position: relative;">'
-            
+            +'<!-- model01 -->'
             +'<table class="ciscosb-table ciscosb-table-dom" ng-if="complexTableDm.childNodeType === '+'mode01'+'">'
               +'<thead>'
                +'<tr>'
@@ -770,8 +772,8 @@ define(["angular"], function(angular) {
             +'</table>'
 
 
-            
-            +'<table class="ciscosb-table ciscosb-table-dom" ng-if="testxx()">'
+            +'<!-- model02 -->'
+            +'<table class="ciscosb-table ciscosb-table-dom" ng-if="complexTableDm.childNodeType ==='+'\'mode02\''+' ">'
               +'<thead>'
                 +'<tr>'
                   +'<th ng-repeat="tbTitle in tableTitleDM track by $index" ng-click="sortData(tbTitle)" ng-class="setComplexTdStyle(tbTitle)" ng-if="tbTitle.isVisible">'
