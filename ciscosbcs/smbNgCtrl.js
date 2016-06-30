@@ -795,13 +795,13 @@ define(["angular"], function(angular) {
                     +'<smb-checkbox ng-if="dataItem.tdType === '+'\'checkBox\''+'" ng-model="dataItem.checked" ng-click="selectRow2(dataItem,$event)"></smb-checkbox>'
 
                     +'<i class="ciscosb-table-expand-icon" ng-class="setExpandMark(dataItem)" ng-if="showTrunkIcon(dataItem,$index)" ng-click="clickTrunkIcon($event,dataItem)"></i>'
-                    +'<span ng-if="dataItem.tdType === '+'\'normal\''+' && !dataItem.isCtrlVisible">{{dataItem.text}}</span>'
+                    +'<span ng-if="dataItem.tdType === '+'\'normal\''+' && !dataItem.isCtrlVisible && dataItem.contentCntr !==\'toggleBtn\'">{{dataItem.text}}</span>'
                     +'<select ng-if="dataItem.contentCntr === '+'\'select\''+' && dataItem.isCtrlVisible" ng-init="currentSelectItem = setCurrentSelectItemVal(dataItem.selectDm,dataItem.text);" ng-model="currentSelectItem" ng-change="selectCtrlChange(dataItem,currentSelectItem,rowItem)" ng-options='+'\'item.name for item in dataItem.selectDm\''+'>'
                         +'<option value = "">-Select a Option-</option>'
                     +'</select>'
                     +'<input type="text" class="form-control" ng-model="dataItem.text" ng-change="textChange(dataItem)" ng-if="dataItem.contentCntr === '+'\'text\''+' && dataItem.isCtrlVisible"/>'
 
-                    +'<switch-button ng-model='+'\'dataItem.text\''+' ng-if="dataItem.contentCntr === '+'\'toggleBtn\''+' && dataItem.isCtrlVisible"></switch-button>'
+                    +'<switch-button ng-model='+'\'dataItem.text\''+' ng-if="dataItem.contentCntr === '+'\'toggleBtn\''+'" disabled="dataItem.isCtrlVisible"></switch-button>'
                   +'</td>'
                 +'</tr>'
                 +'<tr ng-repeat-end groupId = "{{rowItem.trunk[0].trunkId}}" nodeType="{{rowItem.child[0][0].nodeType}}" style="display: none;">'
