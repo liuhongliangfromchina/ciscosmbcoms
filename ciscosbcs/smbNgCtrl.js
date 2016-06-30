@@ -801,7 +801,7 @@ define(["angular"], function(angular) {
                     +'</select>'
                     +'<input type="text" class="form-control" ng-model="dataItem.text" ng-change="textChange(dataItem)" ng-if="dataItem.contentCntr === '+'\'text\''+' && dataItem.isCtrlVisible"/>'
 
-                    +'<switch-button ng-model='+'\'dataItem.text\''+' ng-if="dataItem.contentCntr === '+'\'toggleBtn\''+'" disabled="{{dataItem.isCtrlVisible}}"></switch-button>'
+                    +'<switch-button ng-model='+'\'dataItem.text\''+' ng-if="dataItem.contentCntr === '+'\'toggleBtn\''+'" is-disable="{{dataItem.isCtrlVisible}}"></switch-button>'
                   +'</td>'
                 +'</tr>'
                 +'<tr ng-repeat-end groupId = "{{rowItem.trunk[0].trunkId}}" nodeType="{{rowItem.child[0][0].nodeType}}" style="display: none;">'
