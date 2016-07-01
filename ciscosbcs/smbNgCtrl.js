@@ -1428,6 +1428,7 @@ define(["angular"], function(angular) {
       // ...
   }]);
 
+  if (!window.customDirDeclared) {
   ciscosbcs.directive('myTable', ["$timeout", function($timeout) {
     // ...
     return {
@@ -1504,6 +1505,8 @@ define(["angular"], function(angular) {
       }
       // ...
   }]);
+     window.customDirDeclared = true;
+}
 
   // ciscosbcs.directive('finished', ["$timeout", function($timeout) {
     
