@@ -1174,9 +1174,52 @@ define(["angular"], function(angular) {
     // ...
   }]);
 
-  // ciscosbcs.directive('finished', ["$timeout", function($timeout) {
-    
-  // }]);
+  ciscosbcs.directive('aboutBox', ["$filter", function($filter) {
+    // ...
+    return {
+      restrict: 'E',
+      transclude: true,
+      replace: true,
+      scope:{
+        // ngShow:"="
+                          productName:"@",
+                          versionNumber:"@"
+      },
+                    //require:'^modelDialog',
+      template:'<div class="ciscosb-about-cntr" style="margin:5px;">'
+        +'<p class="ciscosb-about-pt-name" ng-bind="thisProductName">Product Name</p>'
+        +'<div class="ciscosb-about-txt-cntr">'
+            +'<p class="ciscosb-about-txt" ng-bind="versionNumber">Version Number</p>'
+            +'<p class="ciscosb-about-txt" style="display: none;">Licensed User and Serial Number</p>'
+            +'<p class="ciscosb-about-txt-ops" style="display: none;">Optional Links</p>'
+        +'</div>'
+        +'<div class="ciscosb-about-bom-cntr">'
+            +'<div class="ciscosb-about-txt-cntr" ng-bind-html="thisCopyright">'
+            +'</div>'
+            +'<div class="ciscosb-about-img-cntr">'
+                +'<img src="image/images/Ciscogray.png" height="40px">'
+            +'</div>'
+            +'<div style="clear:both;"></div>'
+        +'</div>'
+    +'</div>',
+      compile:function($tEle, $attr){
+        
+        return {
+                              pre: function preLink(scope, iElement, iAttrs, controller) {
+                                  
+                              },
+                              post: function(scope, iElement, iAttrs, controller) {
+
+                                 scope.thisProductName= $filter('translate')('productName');
+                                 scope.thisCopyright = $filter('translate')('copyRight');   
+                                  
+
+                              }
+                            }
+           }
+    }
+    // ...
+  }]);
 
   // ciscosbcs.directive('finished', ["$timeout", function($timeout) {
     
