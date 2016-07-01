@@ -1174,29 +1174,29 @@ define(["angular"], function(angular) {
     // ...
   }]);
 
-  ciscosbcs.directive('finished', ["$timeout", function($timeout) {
+  // ciscosbcs.directive('finished', ["$timeout", function($timeout) {
     
-  }]);
+  // }]);
 
-  ciscosbcs.directive('finished', ["$timeout", function($timeout) {
+  // ciscosbcs.directive('finished', ["$timeout", function($timeout) {
     
-  }]);
+  // }]);
 
-  ciscosbcs.directive('finished', ["$timeout", function($timeout) {
+  // ciscosbcs.directive('finished', ["$timeout", function($timeout) {
     
-  }]);
+  // }]);
 
-  ciscosbcs.directive('finished', ["$timeout", function($timeout) {
+  // ciscosbcs.directive('finished', ["$timeout", function($timeout) {
     
-  }]);
+  // }]);
 
-  ciscosbcs.directive('finished', ["$timeout", function($timeout) {
+  // ciscosbcs.directive('finished', ["$timeout", function($timeout) {
     
-  }]);
+  // }]);
 
-  ciscosbcs.directive('finished', ["$timeout", function($timeout) {
+  // ciscosbcs.directive('finished', ["$timeout", function($timeout) {
     
-  }]);
+  // }]);
 
   ciscosbcs.directive('chooseTableCol', ["$timeout", function($timeout) {
     return {
