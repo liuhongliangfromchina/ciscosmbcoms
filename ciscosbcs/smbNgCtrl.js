@@ -1244,9 +1244,61 @@ define(["angular"], function(angular) {
     // ...
   }]);
 
-  // ciscosbcs.directive('finished', ["$timeout", function($timeout) {
-    
-  // }]);
+  ciscosbcs.directive('switchButton', ["$timeout", function($timeout) {
+    // ...
+    return {
+        require: "ngModel",
+        restrict: "E",
+        transclude: true,
+        replace: true,
+        scope: {
+            title: "@",
+            instance: "=ngModel",
+            isDisable:"@"
+        },
+        template:'<div class="switch-button-warp">'
+            +'<div class="switch-button-inner">'
+                +'<div class="text">ON</div>'
+                +'<div class="slide active"></div>'
+            +'</div>'
+        +'</div>',
+
+        link: function($scope, $element, $attrs, ngModel) {
+            $scope.$watch("instance", function(newVal, oldVal) {
+                if (newVal=="true"||newVal==true) {
+                    $element.addClass("switch-button-active");
+                } else {
+                    $element.removeClass("switch-button-active");
+                }
+            });
+            if($scope.instance=="false"){
+              $element.removeClass("switch-button-active");
+            }
+            
+            $scope.$watch("isDisable",function(newVal,oldVal){
+              if(newVal === "true"){
+                $element.removeClass("switch-button-disable");
+                $element.on("click", function() {
+                    $element.toggleClass("switch-button-active");
+                    if (ngModel) {
+                        $scope.$apply(function() {
+                            $scope.instance = !$scope.instance;
+                        });
+                    }
+                });
+              }else{
+                $element.unbind("click");
+                $element.addClass("switch-button-disable");
+                if(!ngModel){
+                  $element.removeClass("switch-button-active");
+                }
+              }
+            });
+
+        }
+    }
+    // ...
+  }]);
 
   // ciscosbcs.directive('finished', ["$timeout", function($timeout) {
     
