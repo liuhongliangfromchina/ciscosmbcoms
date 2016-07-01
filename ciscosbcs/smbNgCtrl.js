@@ -1728,11 +1728,9 @@ define(["angular"], function(angular) {
             +'<tm-pagination conf="conf" data="tableDM" tm-data="tmData" ng-model="newswitchData" ng-click="paginationClick($event)" ng-mouseup="paginationMouseup($event)"></tm-pagination>'
           +'</div>'
 
-          +'<model-dialog  dialog-title="Reminder" ng-show="showModelDlg"  config="showModelDialogCF">'
-              +'<alert-dialog alert-type="warn"  > '
-                 +'<span ng-bind="alertBoxTxt"></span>'
-              +'</alert-dialog>'
-          +'</model-dialog>'
+            +'<alert-dialog dialog-title="Reminder" ng-show="showModelDlg"  config="showModelDialogCF" alert-type="warn"  > '
+               +'<span ng-bind="alertBoxTxt"></span>'
+            +'</alert-dialog>'
         +'</div>',
 
         controller:function($scope,$element,$transclude){
