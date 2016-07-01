@@ -1300,13 +1300,210 @@ define(["angular"], function(angular) {
     // ...
   }]);
 
-  // ciscosbcs.directive('finished', ["$timeout", function($timeout) {
-    
-  // }]);
+  ciscosbcs.directive('tabGroup', ["$timeout", function($timeout) {
+    // ...
+    return {
+        restrict: "E",
+        transclude: true,
+        replace: true,
+        controller: ["$scope", "$element", function($scope, $element) {
 
-  // ciscosbcs.directive('finished', ["$timeout", function($timeout) {
-    
-  // }]);
+          $scope.tabs = [];
+          var last = null;
+
+          $scope.currentTabName = "";
+          $scope.select = function(tab) {
+            if (last != tab) {
+              last = tab;
+              angular.forEach($scope.tabs, function(val, key) {
+                val.actived = false;
+              });
+              $timeout(function() {
+                tab.actived = true;
+                $scope.$broadcast('tab:toggle:' + tab.$id, tab);
+              }, 200);
+            }
+            if ($scope.exchangeTab) {
+              $scope.exchangeTab($scope.currentTabName);
+            }
+          }
+
+          this.add = function(tab) {
+            // var flag = false;
+            // for (var i = $scope.tabs.length - 1; i >= 0; i--) {
+            //   if($scope.tabs[i].$$destroyed) {
+            //     $scope.tabs.split(i,1);
+            //     flag=true;
+            //   }
+              
+            // };
+
+            $scope.tabs.push(tab);
+            // if(flag){
+            //   for (var i =0; i < $scope.tabs.length; i++) {
+            //   if($scope.tabs[i]) {
+            //     $scope.select($scope.tabs[i]);
+            //   }
+              
+            // }
+            //   // $scope.select($scope.tabs[0]);
+            // }
+            // var flag = false;
+            // for(var i = 0; i < $scope.tabs.length; i++){
+            //   if($scope.tabs[i].tabname  === tab.tabname){
+            //     flag = true;
+            //     break;
+            //   }
+            // }
+            // if(!flag){
+            //   $scope.tabs.push(tab);
+            // }
+
+            $scope.currentTabName = tab.tabname;
+          };
+
+          
+          $scope.$on("setDefaultTab",function(event,args){
+            var flag = false;
+            $timeout(function() {
+              var index = 0;
+              for(var i = 0; i < $scope.tabs.length; i++){
+                if(!flag){
+                  if($scope.tabs[i].ngShow){
+                    angular.forEach($scope.tabs, function(val, key) {
+                      val.actived = false;
+                    });
+                    $scope.tabs[i].actived = true;
+                    flag = true;
+                    last = $scope.tabs[i];
+                    index = i;
+                    $scope.$broadcast('tab:setActive:' + $scope.tabs[index].$id, $scope.tabs[index]);
+                  }
+                }
+              }
+              
+            }, 200);
+          });
+
+        }],
+        compile: function($tEle, attrs) {
+          return {
+
+            pre: function preLink($scope, ele, attrs, controller) {
+
+            },
+            post: function($scope, ele, attrs, controller) {
+              if (attrs.hasOwnProperty("exchangeTab")) {
+                $scope.exchangeTab = attrs.exchangeTab;
+              }
+
+              if (attrs.hasOwnProperty("titlemarginleft")) {
+                $(ele).find(".tab-head").css("marginLeft", attrs.titlemarginleft + "px");
+              } else {
+                $(ele).$(".tab-head").css("marginLeft", "0px");
+              }
+
+            }
+          }
+        },
+        // link: function($scope, ele, attrs) {
+        //       if (attrs.hasOwnProperty("exchangeTab")) {
+        //         $scope.exchangeTab = attrs.exchangeTab;
+        //       }
+        //       if(attrs.hasOwnProperty("titlemarginleft")){
+        //         $(".tab-head").css("marginLeft",attrs.titlemarginleft+"px");
+        //       }else{
+        //         $(".tab-head").css("marginLeft","0px");
+        //       }
+        // },
+        template:'<div class="tab-group">'
+            +'<div class="tab-head panel-gradient-blue no-select">'
+                +'<span ng-repeat="tab in tabs" ng-click="select(tab)" ng-show="tab.ngShow ===undefined || tab.ngShow=== null?true:tab.ngShow"  ng-class=\'{"selected":tab.actived}\'>'
+              +'{{tab.tabname}}'
+            +'</span>'
+            +'</div>'
+            +'<div class="tab-content" ng-transclude style="height:100%;" ></div>'
+        +'</div>'
+      }
+      // ...
+  }]);
+
+  ciscosbcs.directive('myTable', ["$timeout", function($timeout) {
+    // ...
+    return {
+        require: '^tabGroup',
+        restrict: 'E',
+        transclude: true,
+        //replace: true,
+        scope: {
+          tabname: '@',
+          actived: '@',
+          show:'@',
+          ngShow:'='
+        },
+        template:'<div class="sub-tab" ng-class=\'{"actived":actived}\' style="height:{{_height}};">'
+              +'<div class="sub-tab-content-warp" ng-transclude style="height:100%;"> </div>'
+          +'</div>',
+
+        link: function($scope, $element, $attrs, tabGroupCtrl) {
+
+          $scope.setHeight = function() {
+            if (!$scope._height) {
+              var height = document.body.clientHeight || document.documentElement.clientHeight;
+              //$scope._height = $element[0].firstElementChild.offsetHeight;
+
+              $scope._height = "100%";
+              //angular.element($element).css("overflowY","scroll");
+            } else {
+              $scope._height = 0;
+            }
+          };
+
+          $scope.setHeight_ = function() {
+            var height = document.body.clientHeight || document.documentElement.clientHeight;
+            $scope._height = "100%";
+          }
+
+          $scope.$watch("actived", function(newVal, oldVal) {
+            if (newVal === false) {
+              $scope._height = 0;
+            }
+          });
+
+          // $scope.$watch("ngIf",function(newVal,oldVal){
+              
+          //   if(newVal){
+          //     if(!tabGroupCtrl.checkScope($scope)){
+          //       tabGroupCtrl.add($scope);
+          //     }
+              
+          //   }else{
+          //     tabGroupCtrl.remove($scope);
+          //   }
+              
+          // });
+
+          tabGroupCtrl.add($scope);
+
+          $scope.$on("tab:toggle:" + $scope.$id, function() {
+            $scope.setHeight();
+          });
+
+          $scope.$on("tab:setActive:" + $scope.$id, function() {
+            $scope.setHeight_();
+          });
+
+          if (!$scope.$$prevSibling) {
+            if($scope.actived){
+              $scope.actived = true;
+            }
+            $scope.setHeight();
+          }
+
+        }
+      }
+      // ...
+  }]);
 
   // ciscosbcs.directive('finished', ["$timeout", function($timeout) {
     
