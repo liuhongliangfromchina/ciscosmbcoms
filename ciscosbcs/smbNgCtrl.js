@@ -151,6 +151,1053 @@ define(["angular"], function(angular) {
     };
   }]);
 
+  ciscosbcs.directive('smbRadio', ["$timeout", function($timeout) {
+    //.....
+    return {
+      restrict: 'E',
+      // require: "^ngModel",
+      transclude: true,
+      replace: true,
+      // templateUrl: 'script/directive/views/radio.html',
+      template:'<span class="cisco-radio" ng-class=\'{"cisco-radio-checked": isChecked,"cisco-radio-disabled":isDisabled}\'>'+
+          '<span class="radio-inner"></span>'+
+          '<span class="radio-label" ng-hide="labelHide">'+
+              '<ng-transclude></ng-transclude>'+
+          '</span>'+
+      '</span>',
+      //scope:false,
+      scope:{
+          model:"=ngModel",
+          name:"=",
+          value:"=",
+          disabled:"=",
+          ngChecked:"="
+      },
+      link: function(scope, element, attrs,controller){
+        if(element[0].querySelector("ng-transclude").innerHTML===""){
+                    scope.labelHide = true;
+                }
+        scope.$watch("disabled",function(newValue){
+          if(typeof scope.disabled !== "undefined") {
+      
+              if(typeof scope.disabled === "boolean") {
+                scope.isDisabled = scope.disabled
+              }
+              else if(scope.disabled == ""){
+                scope.isDisabled = true
+              }else {
+                scope.isDisabled = false
+              }
+          }else if(typeof attrs.disabled !== "undefined"){
+            if(attrs.disabled == "false"){
+              scope.isDisabled = false
+            }
+            else if(attrs.disabled == "true" || attrs.disabled == ""){
+              scope.isDisabled = true
+            }
+          }else  {
+                scope.isDisabled = false;
+            }
+        });
+        scope.$watch("isDisabled",function(){
+          if(typeof scope.disabled === "undefined"){ return false}
+          else{
+                scope.disabled = scope.isDisabled;
+            }
+        });
+        scope.$watch("ngChecked",function(newCheckValue){
+                  // console.log(newCheckValue);
+
+                  if(typeof newCheckValue ==="undefined"){
+
+
+                    if(typeof scope.name !== "undefined"){
+                  scope.newName = scope.name;
+                }else {
+                  scope.newName = attrs.name;
+                }
+
+                // console.log("====scope.value="+scope.value+"======attrs.value="+attrs.value+"====")
+                if(typeof scope.value !== "undefined"){
+                  scope.newValue = scope.value;
+                }else {
+                  scope.newValue = attrs.value?attrs.value:"";
+                }
+                // console.log("====scope.newValue="+scope.newValue+"=========");
+
+                scope.newModel = ""
+                if(typeof scope.model !== "undefined"){
+                  scope.newModel = scope.model;
+                  
+                }else{
+                  element.removeAttr("ng-class");
+                }
+                
+                // console.log("====scope.newModel=-"+scope.newModel+"||======scope.newValue=-"+scope.newValue+"||====")
+                if(scope.newModel === scope.newValue && (scope.newModel!="" && scope.newValue!="") ){
+                  scope.isChecked = true;
+                  //console.log(1)
+                }else if(scope.newModel=="" && (attrs.checked == "true" || attrs.checked == "checked" || attrs.checked === "") ){
+                  // console.log(2);
+                  // console.log(attrs.checked);
+                  scope.isChecked = true;
+                }else {
+                  // console.log(3)
+                  scope.isChecked = false;
+                }
+              // })
+              // console.log(scope.isChecked);
+
+              scope.$watch("value",function(newValue){
+                  // console.log("-----value------")
+                  if(typeof newValue !== "undefined"){
+                    scope.newValue = newValue;
+                    scope.model = newValue;
+                    // scope.newModel = newValue;
+                    // console.log(scope.newValue);
+                  }
+                  
+                });
+                scope.first = 0;
+                scope.$watch("model",function(newValue){
+                  if(typeof newValue !== "undefined"){
+                    scope.newModel = newValue;
+                    if( scope.newValue !== newValue || (newValue != scope.mode && scope.first>1)){
+                      scope.isChecked =  false;
+                    }else if(scope.newValue === newValue) {
+                      scope.isChecked = true;
+                    }
+                    scope.first ++;
+                  }             
+                });
+
+                
+                    scope.radioClick = false;
+            element.bind("mousedown",function(e){
+              if(!scope.radioClick){
+                scope.radioClick = true;
+                $timeout(function(){
+                  scope.radioClick = false;
+                },100);   //disabled double click
+                if(scope.isDisabled){return false}
+                // console.log(scope.model );
+                if(typeof scope.model === "undefined"){
+                  if(scope.newName){
+                    var list = document.querySelectorAll(e.currentTarget.nodeName+"[name="+attrs.name+"]");   //cisco-radio-checked
+                    for (var x =0;x<list.length;x++){
+                        list[x].classList.remove("cisco-radio-checked");
+                    }
+                    element[0].classList.add("cisco-radio-checked");
+                  }
+                  
+                }else {
+                  // scope.newModel = scope.newValue;
+                  // scope.model = scope.newModel;
+                  // console.log(scope.newValue)
+                  scope.$apply(function(){
+                    scope.newModel = scope.newValue;
+                    scope.model = scope.newValue;
+                      });
+                      $timeout(function(){
+                        scope.isChecked = true;
+                      },100)
+                    }
+                    // console.log("mousedown");
+              }
+            })
+
+                  }else {
+                    
+                      scope.isChecked = newCheckValue;
+                    
+                    
+                  }
+                })
+        
+
+        
+      }
+      //}]
+    }
+
+    //.....
+  }]);
+
+  ciscosbcs.directive('smbCheckbox', ["$timeout", function($timeout) {
+    //.....
+    return {
+            restrict: "E",
+            transclude:true,
+            replace:true,
+            scope: {
+                checked: '=ngModel',
+                disabled:"="
+            },
+            // templateUrl: 'script/directive/views/checkbox.html',
+            template:'<span class="cisco-checkbox" ng-class=\'{"cisco-checkbox-checked":isChecked,"cisco-checkbox-disabled":isDisabled}\'>'+
+              '<span class="checkbox-inner"></span>'+
+              '<span class="checkbox-label" ng-hide="labelHide">'+
+                  '<ng-transclude></ng-transclude>'+
+               '</span>'+
+            '</span>',
+            link: function(scope, element, attrs) {
+                if(element[0].querySelector("ng-transclude").innerHTML===""){
+                    scope.labelHide = true;
+                }
+
+                scope.$watch("checked",function(){
+                    if(typeof scope.checked !== "undefined"){
+                        attrs.checked = scope.checked.toString();
+                    }
+                    if(typeof attrs.checked !== "undefined" && (attrs.checked != "false") ){
+                        scope.isChecked = true
+                    }else {
+                        scope.isChecked = false;
+                    }    
+                });
+                // console.log("||"+element[0].querySelector("ng-transclude").innerHTML+"||")
+
+                scope.$watch("disabled",function(){
+                   if(typeof scope.disabled !== "undefined") {
+                        
+                            if(typeof scope.disabled === "boolean") {
+                                scope.isDisabled = scope.disabled
+                            }
+                            else if(scope.disabled == ""){
+                                scope.isDisabled = true
+                            }else {
+                                scope.isDisabled = false
+                            }
+                        }else if(typeof attrs.disabled !== "undefined"){
+                            if(attrs.disabled == "false"){
+                                scope.isDisabled = false
+                            }
+                            else if(attrs.disabled == "true" || attrs.disabled == ""){
+                                scope.isDisabled = true
+                            }
+                        }else  {
+                            scope.isDisabled = false;
+                        }
+                })
+                scope.$watch("isDisabled",function(){
+                    if(typeof scope.disabled !== "undefined" && typeof scope.disabled === "boolean"){
+                        scope.disabled = scope.isDisabled;
+                    }
+                });
+
+                scope.checkboxClick = false;
+
+                element.bind("click",function(e){
+                    if(!scope.checkboxClick){
+                        scope.checkboxClick = true;
+                        window.setTimeout(function(){
+                            scope.checkboxClick = false;
+                        },100);
+                        $timeout(function(){
+                            if(!scope.isDisabled){
+                                if(scope.isChecked){
+                                    scope.isChecked = false;
+                                }else {
+                                    scope.isChecked = true;
+                                }
+                                if(typeof scope.checked !== "undefined"){
+                                    scope.checked = scope.isChecked;
+                                }
+                            }
+                        })  
+                        
+                    }
+                })
+
+
+
+            }
+            
+        }
+    //.....
+  }]);
+
+  ciscosbcs.directive('smbSelect', ["$filter","$interval","$timeout", function($filter,$interval,$timeout) {
+    // ...
+    return {
+          restrict: "E",
+          scope: {
+            //'placeholder':'=',
+              options: "=",
+              selectedItem: '=ngModel',
+              disabled:"=",
+              ngChange:"&"
+          },
+          replace:true,
+          // templateUrl: 'script/directive/views/select.html',
+          template:'<span class="cisco-dropdown dropdown" ng-class="{\'open\':select.listShow}">'+
+              '<span class="selectValue" ng-click="select.inputClick()" ng-class="{\'disabled\':select.disabled}">'+
+                  '<span class="txt" contenteditable="false" ng-style="select.inputCSS"><b ng-bind="select.name"></b></span>'+
+                  '<span class="caret" ></span>'+
+              '</span>'+
+              '<ul class="dropdown-menu" ng-style="select.listCSS">'+
+                  '<li ng-repeat-start="option in select.list" ng-if="option!=\'seperator\'" ng-class="{\'active\':option.value==select.value}" o="{{option.value}}" s="{{select.value}}" ng-click="select.listClick(option)">'+
+                      '<a tabindex="-1" href="javascript:void(0)" ng-bind="option.name"></a>'+
+                  '</li>'+
+                  '<li ng-repeat-end class="divider" ng-if="option==\'seperator\'"></li>'+
+              '</ul>'+
+          '</span>',
+          link: function(scope, element, attrs) {
+
+              scope.select = {
+                  dex:0,
+                  list:[],
+                  name:"",
+                  value:"",
+                  disabled:false,
+                  placeholder: $filter('translate')("smbSelect"),
+                  listCSS:{},
+                  listShow:false,
+                  listClick : function(option) {
+                      var _this = this;
+                      $timeout(function(){
+                          _this.listShow = false;
+                          scope.select.value = option.value;
+                          scope.select.name = option.name;
+                      })
+                  },
+                  inputCSS :{},
+                  inputEdit:false,
+                  inputClick : function() {
+                      var _this =  this;
+                      if (_this.disabled) return;
+                      $timeout(function(){
+                          _this.listShow = true;
+                      })
+                  }
+                  
+                  
+              }
+
+              scope.$watch("options",function(newValue){
+                  if(typeof newValue === "undefined"){return false;}else{
+                      scope.select.list = [];
+                  }
+                  if(Array.isArray(newValue)){
+                      newValue.forEach(function(item){
+                          if(typeof item ==="string" || typeof itme === "number"){
+                              if(item !== "seperator"){
+                                  var v = {name:item,value:item}                    
+                              }else {
+                                  var v = item;
+                              }
+                              scope.select.list.push(v);
+                          }else if(typeof item === "object"){
+                              var v = {} //name:"",value:""
+                              if(item.name) {v.name = item.name}
+                              if(item.value || item.value == 0) {v.value = item.value}
+
+                              if(!v.name && !v.value) {
+                                  console.log(item +"is error object. Right format: object = {name:'option1',value:'option1'}")
+                                  return false;
+                              }else if(!v.name && v.value){
+                                  v.name = v.value;
+                              }else if(v.name){
+                                  if(!v.value && v.value!=0 ) {
+                                      v.value = v.name;
+                                  }
+                              }
+                              scope.select.list.push(v);                                
+                          }
+                      })
+                  }else if(typeof newValue === "string" || typeof newValue === "number"){
+                      if(newValue !== "seperator"){
+                          var v = {name:newValue,value:newValue}                    
+                      }else {
+                          var v = newValue;
+                      }
+                      scope.select.list.push(v);
+                  }
+                  if(scope.select.list[0] && (typeof scope.selectedItem ==="undefined" || scope.selectedItem==="") ){
+                      scope.select.name = scope.select.list[0].name;
+                      scope.select.value = scope.select.list[0].value;
+                  }
+                  // console.log(newValue);
+              });
+
+              scope.$watch("selectedItem",function(newValue){
+                  // console.log(newValue);
+                  if(typeof newValue === "object" && newValue!=null){
+                      if(newValue.value || newValue == 0){
+                          scope.select.value = newValue.value;
+                          scope.select.name = newValue.name;
+                      }else {
+                          console.log(newValue + "is error object. Right format: object = {value:'option1'}")
+                      }
+                  }else if (typeof newValue ==="string" || typeof newValue ==="number"){
+                      scope.select.value = newValue;
+                      scope.select.list.forEach(function(item){
+                          if(item.value === newValue){
+                              scope.select.name = item.name;
+                          }
+                      })
+                      // scope.select.name = newValue;
+                      if(newValue ===""){ 
+                          scope.select.value = null;
+                          scope.select.name = scope.select.placeholder;
+                      }
+                  }else {
+                      scope.select.value = null;
+                      scope.select.name = scope.select.placeholder;
+                  }
+                  setCSS();
+                  
+              });
+              scope.$watch("select.value",function(newValue){
+                  if(typeof newValue === "undefined" || newValue===null || newValue===""){return}
+                  // console.log(typeof newValue);
+              
+                  
+                  scope.selectedItem = newValue;
+                  if(scope.select.dex > 0){
+                      $timeout(function(){
+                          scope.ngChange();
+                          console.log("select changed" + scope.select.dex)
+                      },100);
+                  }
+                  if(scope.select.name !== scope.select.placeholder){
+                      scope.select.dex++;
+                  }
+                  
+              });
+
+              scope.$watch("disabled",function(newValue){
+                  if(typeof newValue ==="boolean"){
+                      scope.select.disabled = newValue;
+                  }else if(typeof attrs.disabled !== "undefined"){
+                      if(attrs.disabled == "false"){
+                          scope.select.disabled = false
+                      }
+                      else if(attrs.disabled == "true" || attrs.disabled == ""){
+                          scope.select.disabled = true
+                      }
+                  }
+              });
+              scope.$watch("select.disabled",function(newValue){
+                  if(typeof newValue === "boolean"){
+                      if(typeof scope.disabled !== "undefined"){
+                          scope.disabled = newValue;
+                                               
+                      }else {
+                          attrs.disabled = newValue;   
+                      }
+                  }
+              });
+
+
+              // scope.$watch("onChang",function(newValue){
+              //     if(newValue){
+              //      console.log("onChang function is changed");
+              //     }
+              // });
+              var rnd = "select"+parseInt(Math.random()*(100-0+1)+0);
+
+
+              scope.$watch("select.listShow",function(newValue){
+                  if(newValue === true) {
+                      // console.log(angular.element(element).find("input"));
+                      element[0].querySelector(".selectValue .txt b").contentEditable = "true";
+                      element[0].querySelector(".selectValue .txt b").focus();
+                      element[0].classList.add("dropdown-focus");
+
+                      angular.element(document).on("click."+rnd, function(e) {
+                          if (!element[0].contains(e.target)) {
+                              $timeout(function(){
+                                  scope.select.listShow = false;
+                              })
+                              // scope.$digest();
+                          }else {
+                            var eW = $(element).find(".dropdown-menu").width();
+                            var eX = e.x - e.offsetX + eW;
+                            var sW = window.innerWidth;
+                            var eH = $(element).find(".dropdown-menu").height();
+                            var eY = e.y - e.offsetY +e.currentTarget.offsetWidth + eH;
+                            var sH = window.innerHeight;
+                            $timeout(function(){
+                              scope.select.listCSS.left = eX > sW?"auto": 0;
+                              scope.select.listCSS.right = eX > sW? 0:"auto";
+                              scope.select.listCSS.top = eY>sH?"auto":"100%";
+                              scope.select.listCSS.bottom = eY>sH? "100%":"auto";
+                            })
+                          }
+                      })
+
+                  }else if(newValue === false) {
+                      element[0].classList.remove("dropdown-focus");
+                      angular.element(document).off("click."+rnd);
+                  }
+              });
+
+              // scope.showEdit = false;
+              var setCSS = function(){
+                  var w = 0;
+                  if(attrs.style){
+                      var str = attrs.style;
+                      if(str.lastIndexOf(";")==str.length-1){
+                          str = str.substring(0,str.lastIndexOf(";"));
+                      }
+                      var list = str.split(";");
+                      list.forEach(function(item){
+                          var key = item.split(":")[0].trim();
+                          var value = item.split(":")[1].trim();
+                          if(key=="text-align"){
+                              if(value=="center"){
+                                  scope.select.inputCSS.justifyContent="center";
+                                  scope.select.listCSS.textAlign="center";
+                              }
+                              if(value=="right"){
+                                  scope.select.inputCSS.justifyContent="flex-end";
+                                  scope.select.listCSS.textAlign="right";
+                              }
+                              if(value=="left"){
+                                  scope.select.inputCSS.justifyContent="flex-start";
+                                  scope.select.listCSS.textAlign="left";
+                              }
+                          }
+                          if(key=="font-size"){
+                              scope.select.inputCSS.fontSize = value;
+                              scope.select.listCSS.fontSize = value;
+                          }
+                      });
+                  }
+              }
+
+
+              // scope.setXY = {}
+              
+              // scope.setXY = {}
+              var htmlTotxt =  function(html){
+                    html = html.replace(/(\n)/g, "");  
+                    html = html.replace(/(\t)/g, "");
+                    html = html.replace(/(\r)/g, ""); 
+                    html = html.replace(/<\/?[^>]*>/g, ""); 
+                    return html;
+              }
+              
+              angular.element(element[0].querySelector(".selectValue .txt")).bind("mousedown",function(){
+                  // console.log("||"+this.querySelector("b").innerText.trim()+"||");
+                  var str = htmlTotxt(this.querySelector("b").innerHTML).trim();
+                  if(str == ""){
+                      this.querySelector("b").innerHTML = scope.select.placeholder;
+                  }
+              });
+              angular.element(element[0].querySelector(".selectValue .txt")).bind("keydown",function(){
+                  var str = htmlTotxt(this.querySelector("b").innerHTML).trim();
+                  if(str == scope.select.placeholder){
+                      this.querySelector("b").innerHTML = " ";
+                  }
+              });
+              angular.element(element[0].querySelector(".selectValue .txt")).bind("keyup",function(){
+                  var str = htmlTotxt(this.querySelector("b").innerHTML).trim();
+                  var _this = this;
+                  if(str == ""){
+                      this.querySelector("b").innerHTML = scope.select.placeholder;
+                      return;
+                  }
+                  if (scope.select.disabled) return;
+                  // if(_this.querySelector("b").innerHTML.trim() == scope.select.placeholder){_this.querySelector("b").innerHTML = " "}
+                  if ( /^(\w|[\u4E00-\u9FA5])*$/g.test(str) ){
+                      $timeout(function(){
+                          scope.select.name = scope.select.value = str;
+                          // scope.selectedItem = scope.select.value;
+                      });
+                  }
+              });
+          }
+          
+      }
+    // ...
+  }]);
+
+  ciscosbcs.directive('modelDialog', ["$window","$timeout","$filter", function($window,$timeout,$filter) {
+    // ...
+    return {
+      restrict: 'E',
+      transclude: true,
+      replace: true,
+      // templateUrl: 'script/directive/views/modelDialog.html',
+      template:'<div class="normalDialog" >'+
+        '<div class="mask modal" ng-show="newConfig.mask.show" ng-mouseup="stopBubble($event)" ng-click="newConfig.mask.click($event,this)"></div>'+
+        '<div class="modal-dialog" ng-style="dialogShowStyle">'+
+          '<div class="modal-content">'+
+            '<div class="modal-close"><button type="button" class="close" ng-click="cancel()">×</button></div>'+
+            '<div class="modal-header" ng-if="newTitle" >'+
+              '<h4 class="modal-title" style="color:black" ng-bind="newTitle"><!-- Title --></h4>'+
+            '</div>'+
+            '<div class="modal-body" ng-style="scrollShow" ng-transclude >'+
+            '</div>'+
+            '<div class="modal-footer" ng-show="newConfig.ok.show || newConfig.cancel.show">'+
+              '<button id="{{newConfig.ok.id}}" class="btn btn-primary" type="button" ng-disabled="newConfig.ok.disabled" ng-click="newConfig.ok.click($event,this)" ng-mousedown="ok()" ng-show="newConfig.ok.show" ng-bind-html="newConfig.ok.txt">ok</button>'+
+              '<button id="{{newConfig.cancel.id}}" class="btn btn-warning" type="button" ng-disabled="newConfig.cancel.disabled" ng-click="newConfig.cancel.click($event,this)" ng-mouseup="cancel()" ng-show="newConfig.cancel.show" ng-bind="newConfig.cancel.txt">cancel</button>'+
+            '</div>'+
+          '</div>'+
+        '</div>'+
+      '</div>',
+      scope:{
+        dialogTitle:"=",
+        okButton:"&",
+        cancelButton:"&",
+        config:"=",
+        ngShow:"="
+      },
+      //controller:  ["$scope", "$element","$attrs", function(scope, element,attrs) {       
+      link: function(scope, element, attrs){
+        scope.$watch("dialogTitle",function(newValue){
+          if(typeof newValue!=="undefined"){
+            scope.newTitle = newValue;
+          }else if(typeof attrs.dialogTitle !=="undefined"){
+            scope.newTitle = attrs.dialogTitle;
+          }
+          else {
+            scope.newTitle = "";
+          }
+        })
+        $(element).bind("contextmenu",function(){
+          return false;
+        });
+        var close = function(){
+          scope.ngShow=false;
+          scope.dialogShowStyle = {};
+        }
+        scope.init={
+          mask:{
+            show:true,
+            click:function(){}
+          },
+          ok:{
+            id:"",
+            click:null,
+            disabled:false,
+            txt:$filter('translate')('ok'),
+            show:true
+          },
+          cancel:{
+            id:"",
+            click:null,
+            disabled:false,
+            txt:$filter('translate')('cancel'),
+            show:true
+          }
+        }
+        
+        scope.$watch("config",function(newValue){
+          if(typeof newValue ==="undefined"){
+            console.warn("model-dialog direcitve config error");
+            scope.newConfig = scope.init;
+          }
+          else {
+            if(typeof scope.config.mask ==="undefined"){ scope.config.mask= {show:scope.init.mask.show,click:scope.init.mask.click}  }
+            if(typeof scope.config.mask.show ==="undefined" || !(typeof scope.config.mask.show ==="boolean")) {scope.config.mask.show = scope.init.mask.show; } //console.log(scope.config.mask.show)
+            if(typeof scope.config.mask.click ==="undefined") {
+              scope.config.mask.click = scope.init.mask.click
+            }
+            else if (!(typeof scope.config.mask.click ==="function")){
+              if(typeof scope.config.mask.click ==="string" && scope.config.mask.click ==="close"){
+                scope.config.mask.click = function(){
+                  close();
+                }
+              }else {
+                scope.config.mask.click = scope.init.mask.click
+              }
+            }
+            if(typeof scope.config.ok ==="undefined"){ scope.config.ok= {id:scope.init.ok.id,click:scope.init.ok.click,disabled:scope.init.ok.disabled,txt:scope.init.ok.txt,show:scope.init.ok.show}  }
+            if(typeof scope.config.ok.id ==="undefined") {scope.config.ok.id = scope.init.ok.id}
+            if(typeof scope.config.ok.txt ==="undefined") {scope.config.ok.txt = scope.init.ok.txt}
+            if(typeof scope.config.ok.click ==="undefined" || !(typeof scope.config.ok.click ==="function")) {scope.config.ok.click = scope.init.ok.click}
+            if(typeof scope.config.ok.disabled ==="undefined" || !(typeof scope.config.ok.disabled ==="boolean")) {scope.config.ok.disabled = scope.init.ok.disabled}
+            if(typeof scope.config.ok.show ==="undefined" || !(typeof scope.config.ok.show ==="boolean")) {scope.config.ok.show = scope.init.ok.show}
+
+            if(typeof scope.config.cancel ==="undefined"){ scope.config.cancel= {id:scope.init.cancel.id,click:scope.init.cancel.click,disabled:scope.init.cancel.disabled,txt:scope.init.cancel.txt,show:scope.init.cancel.show}  }
+            if(typeof scope.config.cancel.id ==="undefined") {scope.config.cancel.id = scope.init.cancel.id}
+            if(typeof scope.config.cancel.txt ==="undefined") {scope.config.cancel.txt = scope.init.cancel.txt}
+            if(typeof scope.config.cancel.click ==="undefined" || !(typeof scope.config.cancel.click ==="function")) {scope.config.cancel.click = scope.init.cancel.click}
+            if(typeof scope.config.cancel.disabled ==="undefined" || !(typeof scope.config.cancel.disabled ==="boolean")) {scope.config.cancel.disabled = scope.init.cancel.disabled}
+            if(typeof scope.config.cancel.show ==="undefined" || !(typeof scope.config.cancel.show ==="boolean")) {scope.config.cancel.show = scope.init.cancel.show}
+
+            scope.newConfig = scope.config;
+          }
+        })
+        
+
+        // console.log(scope.config.mask.show);
+
+
+
+
+                scope.stopBubble = function(ev){
+                  //console.log(ev);
+                  FIC.stopBubble(ev)
+                }
+
+
+        var eleWidth = $(element).find(".modal-dialog").width();
+        var eleHeight = $(element).find(".modal-dialog").height();
+        var setXY = function(){
+          eleWidth = $(element).find(".modal-dialog").width();
+          eleHeight = $(element).find(".modal-dialog").height();
+          var w = ($window.innerWidth-eleWidth)/2;
+          var h = ($window.innerHeight-eleHeight)/2/2;
+          w = w<0?0:w;
+          h = h<0?0:h;
+            scope.dialogShowStyle = {
+              "left": w+"px",
+              "top": h+"px",
+              "opacity":"1"
+            }         
+        }
+        
+        var setScroll = function(){
+          var h = element.find(".modal-body")[0]?element.find(".modal-body").innerHeight():0;
+          var h1 = element.find(".modal-header")[0]?element.find(".modal-header").innerHeight():0;
+          var h2 = element.find(".modal-footer")[0]?element.find(".modal-footer").innerHeight():0;
+          var innerH = $window.innerHeight - h1 - h2;
+          // h = h + h1 + h2;
+          // console.log("eleHeight:"+eleHeight+"innerH: "+innerH +" h1:"+h1+" h2:"+h2);
+          // if(eleHeight >= $window.innerHeight){
+            scope.scrollShow = {
+              "max-height": innerH  +"px"
+            }
+            if(h>=innerH){
+             scope.scrollShow.overflowY = "auto" 
+            }
+            // console.log("h:"+h + " innerH:"+innerH)
+          // }
+        }
+        
+        scope.$watch("ngShow",function(newValue){
+          if(newValue === true){
+            // setXY();
+            // setScroll();
+            $timeout(function(){
+              setXY();
+              setScroll();
+            },100);
+
+            var resizeTime = -1;
+            angular.element($window).bind('resize.modelDialog', function(){
+              // console.log( "Timeout executed000000000000");
+              if(resizeTime === -1){
+                resizeTime = $timeout(function() {
+                        // console.log( "Timeout executed");
+                        //$timeout(function(){
+                                 setXY();
+                                 setScroll();
+                        //});
+                        $timeout.cancel( resizeTime );
+                        resizeTime = -1;
+                    },
+                    100
+                )
+              }
+            });
+
+          }else if(newValue === false) {
+            // console.log("unbind resize.modelDialog")
+            angular.element($window).unbind('resize.modelDialog');
+          }
+        })
+              
+
+        
+        scope.ok = function(){
+          //close();
+          if(typeof scope.config !== "undefined" ){
+            $timeout(function(){
+              scope.config = scope.newConfig;
+            });            
+          }
+          if(typeof scope.okButton === "function"){
+            scope.okButton()
+          }
+        }
+        scope.cancel = function(){
+                    
+          if(typeof scope.cancelButton === "function"){
+            scope.cancelButton()
+          }
+          close();
+
+        }
+      }
+      //}]
+    }
+    // ...
+  }]);
+
+  ciscosbcs.directive('alertDialog', ["$timeout", function($timeout) {
+    // ... 
+    return {
+      restrict: 'E',
+      transclude: true,
+      replace: true,
+      //require:'^modelDialog',
+      templateUrl: 'script/directive/views/alertDialog.html',
+      scope:{
+        alertType:"@"
+      },
+      link: function(scope, element, attrs){
+        attrs.$observe("alertType",function(){
+          if(scope.alertType ==="info"){
+            scope.alertIcon = "glyphicon-info-sign ciscosb-icon-severity-info";
+          }else if(scope.alertType ==="warn"){
+            scope.alertIcon = "glyphicon-warning-sign ciscosb-icon-severity-warn";
+          }else if(scope.alertType ==="critical"){
+            scope.alertIcon = "glyphicon-remove-sign ciscosb-icon-severity-alert";
+          }
+        })
+
+      }
+    }
+    // ...
+    
+  }]);
+
+  ciscosbcs.directive('tipTool', ["$window","$position", function($window,$position) {
+    // ...
+    return {
+      restrict: 'AE',
+      transclude: true,
+      replace: false,
+      templateUrl: 'script/directive/views/tipTool.html',
+      scope:{
+        tipText:"@"
+      },
+      //replace: true,
+      link: function(scope, element, attrs){
+        angular.element(element).bind("mouseenter",function(event){
+          
+          var tooltip = element[0].querySelector(".ciscosb-tooltip-cntr");
+          tooltip.style.display = "block";
+          tooltip.style.padding = "7px 15px";
+          tooltip.style.position = "fixed";
+          console.log(tooltip.offsetWidth);
+
+          var tipHeight = tooltip.offsetHeight;
+          var tipWidth = tooltip.offsetWidth;
+          var h = event.y - event.offsetY - tipHeight  - 5;
+          var w = event.x - event.offsetX -tipWidth/2;
+          scope.$apply(function(){
+            scope.XYstyle = {
+              "left":w+"px",
+              "top":h+"px"
+            }
+          });
+        });
+        angular.element(element).bind("mouseleave",function(event){
+          scope.$apply(function(){
+            scope.XYstyle = {
+              "display":"none"
+            }
+          })
+        });
+      }
+    }
+    // ...
+  }]);
+
+  ciscosbcs.directive('pageContent', ["$filter","$timeout","$interval","$window", function($filter,$timeout,$interval,$window) {
+    // ...
+    return {
+      restrict: 'E',
+      replace: true,
+      transclude: true,
+      scope:{
+        // ngShow:"="
+        ptitle : "=",
+        btnConfig:"=",
+        full:"="
+      },
+      // templateUrl: 'script/directive/views/pageContent.html',
+      template:'<div class="ciscosb-PageContent" ng-style="page.pageStyle">'+
+      '<div class="content-title" ng-style="page.titleStyle">'+
+        '<div class="left" ng-show="page.title"><h3 ng-bind="page.title">content title</h3></div>'+
+        '<div class="right" ng-show="page.btnConfig.ok.show || page.btnConfig.cancel.show">'+
+          '<button class="btn btn-primary confirm" ng-show="page.btnConfig.ok.show" ng-bind-html="page.btnConfig.ok.txt" ng-disabled="page.btnConfig.ok.disabled" ng-click="page.btnConfig.ok.click($event,this)">confirm</button>'+
+          '<button class="btn btn-warning cancel" ng-show="page.btnConfig.cancel.show" ng-bind-html="page.btnConfig.cancel.txt" ng-disabled="page.btnConfig.cancel.disabled" ng-click="page.btnConfig.cancel.click($event,this)">cancel</button>'+
+        '</div>'+
+      '</div>'+
+      '<div class="content-show" ng-style="page.showCss" ng-transclude>'+
+      '</div>'+
+      '</div>',
+      link:function(scope,element,attrs){
+        var page = {
+          init:function(){
+            var parentCss = function(){
+              if( element[0].parentNode.className=== "ng-scope"){
+                element[0].parentNode.style.height = "auto";
+              }
+              
+            }
+            parentCss();
+            
+          },
+          getCurrentStyle : function (obj, prop) {     
+              if (obj.currentStyle) {        
+                  return obj.currentStyle[prop];     
+              }      
+              else if (window.getComputedStyle) {              
+                  return document.defaultView.getComputedStyle(obj,null)[prop];     
+              }      
+              return null;   
+          }, 
+          pageStyleHeight:function(){
+            // var css = {}
+            var mph = parseInt(this.getCurrentStyle(element[0],"paddingTop")) + parseInt(this.getCurrentStyle(element[0],"paddingBottom")) + parseInt(this.getCurrentStyle(element[0],"marginBottom"))+parseInt(this.getCurrentStyle(element[0],"marginTop"));
+            // console.log(mph)
+            var h = window.innerHeight - document.querySelector(".ciscosb-top-pannel").offsetHeight ;//- element[0].querySelector(".content-title").offsetHeight 
+            var maxHeight = h + "px";
+            return maxHeight;
+          },
+          titleStyleWidth:function(){
+            var maxWidth = element[0].parentNode.offsetWidth;
+            var innerWidth = element[0].clientWidth;
+            // console.log("maxWidth:" +maxWidth +" innerWidth:"+innerWidth);
+            return innerWidth+"px";
+          },
+          parentScroll:function(value){
+            if(element[0].parentNode.parentNode){
+              element[0].parentNode.parentNode.style.overflow = value //"visible";
+            }
+          }
+
+        }
+        page.init();
+
+        /**/
+        scope.page = {
+          titleShow : false
+        }
+        // scope.page.showCss = page.showCss();
+        // console.log(scope.page.showCss)
+        // var resizeTime = -1;
+        // angular.element($window).unbind('resize');  //jq event 'resize.pageContent'
+        // angular.element($window).bind('resize', function(){
+        //   if(resizeTime === -1){
+
+        //     resizeTime = $timeout(function() {
+        //           scope.page.showCss = page.showCss();
+        //           $timeout.cancel( resizeTime );
+        //           resizeTime = -1;
+        //       },
+        //       1000
+        //     )
+        //   }
+        // });
+        scope.$watch("ptitle",function(newVlaue){
+          if(typeof newVlaue !== "undefined"){
+            scope.page.title = newVlaue;
+            scope.page.titleShow = true;
+          }else if(typeof attrs.title !== "undefined"){
+            scope.page.title = attrs.ptitle;
+            scope.page.titleShow = true;
+          }
+        });
+        scope.page.btnConfig = {
+          ok : {
+            show:false,
+            txt:$filter("translate")('ok'),
+            disabled:false,
+            click:function(){console.log("confirm clicked")}
+          },
+          cancel : {
+            show:false,
+            txt:$filter("translate")('cancel'),
+            disabled:false,
+            click:function(){console.log("cancel clicked")}
+          }
+        }
+        scope.$watch("btnConfig",function(newVlaue){
+          if(typeof newVlaue === "object") {
+            if(newVlaue.ok && newVlaue.ok.show ){
+              scope.page.btnConfig.ok.show = newVlaue.ok.show;
+              if(typeof newVlaue.ok.txt ==="string") {scope.page.btnConfig.ok.txt = newVlaue.ok.txt};
+              if(typeof newVlaue.ok.disabled ==="boolean") {scope.page.btnConfig.ok.disabled = newVlaue.ok.disabled};
+              if(typeof newVlaue.ok.click ==="function") {scope.page.btnConfig.ok.click = newVlaue.ok.click}
+              scope.page.titleShow = true;
+            }
+            if(newVlaue.cancel && newVlaue.cancel.show ){
+              scope.page.btnConfig.cancel.show = newVlaue.cancel.show;
+              if(typeof newVlaue.cancel.txt ==="string") {scope.page.btnConfig.cancel.txt = newVlaue.cancel.txt};
+              if(typeof newVlaue.cancel.disabled ==="boolean") {scope.page.btnConfig.cancel.disabled = newVlaue.cancel.disabled};
+              if(typeof newVlaue.cancel.click ==="function") {scope.page.btnConfig.cancel.click = newVlaue.cancel.click}
+              scope.page.titleShow = true;
+            }
+          }
+        });
+        scope.page.titleStyle = {}
+        scope.page.pageStyle ={};
+        scope.page.showCss = {};
+
+        scope.$watch("page.titleShow",function(newVlaue){
+          if(typeof newVlaue !=="undefined" && newVlaue===false){
+            scope.page.showCss.marginTop = "0";
+          }
+        });
+
+        var titleStyleDex = 0;
+        var titleStyleTime = $interval(function(){
+          titleStyleDex ++;
+          // console.log(titleStyleDex);
+          scope.page.titleStyle.width = page.titleStyleWidth();
+          scope.page.pageStyle.height = page.pageStyleHeight();
+          if(titleStyleDex>10){
+            $interval.cancel(titleStyleTime)
+            // window.clearInterval(titleStyleTime);
+          }
+        },100);
+
+        var resizeTime = -1;
+        angular.element($window).unbind('resize.pageContent');  //jq event 'resize.pageContent'
+        angular.element($window).bind('resize.pageContent', function(){
+          if(resizeTime !== -1){$timeout.cancel( resizeTime );} //page.parentScroll("auto");
+
+          resizeTime = $timeout(function() {
+                scope.page.pageStyle.height = page.pageStyleHeight();
+                scope.page.titleStyle.width = page.titleStyleWidth();
+                // page.parentScroll("visible");
+            })
+        });
+        scope.$watch("full",function(newVlaue){
+          if(typeof newVlaue === "boolean" && newVlaue === true){
+            scope.page.pageStyle.padding=0;
+          }
+        })
+
+      //end link
+      }
+    }
+    // ...
+  }]);
+
+  ciscosbcs.directive('finished', ["$timeout", function($timeout) {
+    
+  }]);
+
+  ciscosbcs.directive('finished', ["$timeout", function($timeout) {
+    
+  }]);
+
+  ciscosbcs.directive('finished', ["$timeout", function($timeout) {
+    
+  }]);
+
+  ciscosbcs.directive('finished', ["$timeout", function($timeout) {
+    
+  }]);
+
+  ciscosbcs.directive('finished', ["$timeout", function($timeout) {
+    
+  }]);
+
+  ciscosbcs.directive('finished', ["$timeout", function($timeout) {
+    
+  }]);
+
   ciscosbcs.directive('chooseTableCol', ["$timeout", function($timeout) {
     return {
         restrict: 'E',
