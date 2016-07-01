@@ -742,11 +742,11 @@ define(["angular"], function(angular) {
       },
       link: function(scope, element, attrs){
         scope.$watch("alertType",function(){
-          if(scope.alertType ==="info"){
+          if(scope.alertType ==="info" || attrs.alertType==="info"){
             scope.alertIcon = "glyphicon-info-sign ciscosb-icon-severity-info";
-          }else if(scope.alertType ==="warn"){
+          }else if(scope.alertType ==="warn"  || attrs.alertType==="warn"){
             scope.alertIcon = "glyphicon-warning-sign ciscosb-icon-severity-warn";
-          }else if(scope.alertType ==="critical"){
+          }else if(scope.alertType ==="critical" || attrs.alertType==="critical"){
             scope.alertIcon = "glyphicon-remove-sign ciscosb-icon-severity-alert";
           }
         })
