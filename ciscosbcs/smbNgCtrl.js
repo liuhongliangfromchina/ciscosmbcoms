@@ -932,16 +932,29 @@ define(["angular"], function(angular) {
   ciscosbcs.directive('alertDialog', ["$timeout", function($timeout) {
     // ... 
     return {
-      restrict: 'E',
+      restrict: 'AE',
       transclude: true,
       replace: true,
       //require:'^modelDialog',
-      templateUrl: 'script/directive/views/alertDialog.html',
+      // templateUrl: 'script/directive/views/alertDialog.html',
+      template:'<div>'+
+      '<model-dialog  dialog-title="alertBoxTitle" ng-show="alertShow" ok-button="alertBtnOk()" cancel-button="alertBtncancel()"  config="dialogConfig">'+
+        '<div class="alert-body-cont" style="margin:5px;display:flex;">'+
+          '<span class="glyphicon ciscosb-icon-alertbox-size" ng-class="alertIcon"></span>'+
+          '<span class="alertBoxTxt" ng-transclude>{{alertBoxTxt}}</span>'+
+        '</div>'+
+      '</model-dialog>'+
+      '</div>',
       scope:{
-        alertType:"@"
+        alertType:"=",
+        alertBoxTitle:"=dialogTitle",
+        alertShow:"=ngShow",
+        alertBtnOk:"&okButton",
+        alertBtncancel:"&cancelButton",
+        dialogConfig:"="
       },
       link: function(scope, element, attrs){
-        attrs.$observe("alertType",function(){
+        scope.$watch("alertType",function(){
           if(scope.alertType ==="info"){
             scope.alertIcon = "glyphicon-info-sign ciscosb-icon-severity-info";
           }else if(scope.alertType ==="warn"){
